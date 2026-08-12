@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cake Delight — Cloud-Native Microservices Shop</title>
+
+  <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #070913;
+      --bg-card: rgba(18, 24, 41, 0.75);
+      --bg-card-hover: rgba(28, 37, 62, 0.85);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-border-hover: rgba(244, 63, 94, 0.35);
+      
+      --primary: #f43f5e;
+      --primary-hover: #e11d48;
+      --primary-glow: rgba(244, 63, 94, 0.4);
+      
+      --accent: #fbbf24;
+      --accent-hover: #f59e0b;
+      --accent-glow: rgba(251, 191, 36, 0.35);
+      
+      --indigo: #6366f1;
+      --indigo-glow: rgba(99, 102, 241, 0.35);
+      
+      --success: #10b981;
+      --success-glow: rgba(16, 185, 129, 0.35);
+      
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      
+      --shadow-card: 0 10px 30px -5px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--glass-border);
+      --shadow-hover: 0 20px 40px -10px rgba(244, 63, 94, 0.25), 0 0 0 1px var(--glass-border-hover);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(244, 63, 94, 0.15) 0%, transparent 45%),
+        radial-gradient(circle at 85% 85%, rgba(99, 102, 241, 0.15) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.08) 0%, transparent 60%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4, .brand-font {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-dark); }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+    /* Sticky Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: rgba(7, 9, 19, 0.82);
+      border-bottom: 1px solid var(--glass-border);
+      padding: 0.9rem 2rem;
+      transition: all 0.3s ease;
+    }
+
+    .nav-container {
+      max-width: 1320px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .brand-logo-wrapper {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, rgba(244, 63, 94, 0.2) 0%, rgba(251, 191, 36, 0.2) 100%);
+      border: 1px solid rgba(244, 63, 94, 0.4);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      box-shadow: 0 0 15px var(--primary-glow);
+    }
+
+    .brand-title {
+      font-size: 1.55rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff 0%, #f43f5e 50%, #fbbf24 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-tag {
+      font-size: 0.68rem;
+      background: linear-gradient(135deg, rgba(244, 63, 94, 0.2), rgba(99, 102, 241, 0.2));
+      color: #fda4af;
+      border: 1px solid rgba(244, 63, 94, 0.35);
+      padding: 0.2rem 0.55rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    /* System Health Badge */
+    .health-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--glass-border);
+      padding: 0.45rem 0.85rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .health-indicator:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.15);
+      color: var(--text-main);
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 10px var(--success-glow);
+      animation: pulseDot 2s infinite;
+    }
+
+    @keyframes pulseDot {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    /* User Badge */
+    .user-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--glass-border);
+      padding: 0.45rem 0.85rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .user-badge input {
+      background: transparent;
+      border: none;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.85rem;
+      width: 85px;
+      outline: none;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.25rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, #e11d48 100%);
+      color: #fff;
+      box-shadow: 0 4px 15px var(--primary-glow);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px var(--primary-glow);
+      background: linear-gradient(135deg, #f43f5e 0%, #be123c 100%);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-main);
+      border: 1px solid var(--glass-border);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-accent {
+      background: linear-gradient(135deg, var(--accent) 0%, #f59e0b 100%);
+      color: #070913;
+      font-weight: 700;
+      box-shadow: 0 4px 15px var(--accent-glow);
+    }
+    .btn-accent:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px var(--accent-glow);
+    }
+
+    .btn-sm {
+      padding: 0.4rem 0.85rem;
+      font-size: 0.8rem;
+      border-radius: 8px;
+    }
+
+    .cart-btn {
+      position: relative;
+    }
+
+    .cart-badge {
+      background: #ffffff;
+      color: #be123c;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 0.15rem 0.5rem;
+      border-radius: 9999px;
+      margin-left: 0.3rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    /* Main Container */
+    main {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 2.2rem 1.5rem;
+      flex: 1;
+      width: 100%;
+    }
+
+    /* Hero Banner */
+    .hero {
+      background: linear-gradient(135deg, rgba(244, 63, 94, 0.12) 0%, rgba(99, 102, 241, 0.08) 50%, rgba(18, 24, 41, 0.8) 100%);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 2.8rem 2.5rem;
+      margin-bottom: 2.2rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(circle, rgba(244, 63, 94, 0.25) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-content h1 {
+      font-size: 2.6rem;
+      font-weight: 800;
+      margin-bottom: 0.6rem;
+      line-height: 1.15;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-content p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 680px;
+      line-height: 1.5;
+    }
+
+    .hero-architecture {
+      display: flex;
+      gap: 0.6rem;
+      margin-top: 1.4rem;
+      flex-wrap: wrap;
+    }
+    .arch-chip {
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.3rem 0.75rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-sm);
+      color: #e2e8f0;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.2s ease;
+    }
+    .arch-chip:hover {
+      background: rgba(244, 63, 94, 0.15);
+      border-color: rgba(244, 63, 94, 0.4);
+      color: #fff;
+    }
+
+    /* Filter Card */
+    .filter-card {
+      background: var(--bg-card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      margin-bottom: 2.2rem;
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow-card);
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.2rem;
+      align-items: end;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+    .form-group label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+    .form-control {
+      background: rgba(7, 9, 19, 0.75);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      padding: 0.7rem 1rem;
+      color: var(--text-main);
+      font-size: 0.9rem;
+      outline: none;
+      transition: all 0.25s ease;
+    }
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.2);
+      background: rgba(7, 9, 19, 0.95);
+    }
+
+    /* Cake Grid */
+    .section-title {
+      font-size: 1.6rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .cake-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.8rem;
+    }
+
+    /* Cake Card */
+    .cake-card {
+      background: var(--bg-card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: var(--shadow-card);
+      position: relative;
+    }
+    .cake-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--glass-border-hover);
+      background: var(--bg-card-hover);
+    }
+
+    .cake-img-wrapper {
+      position: relative;
+      height: 210px;
+      width: 100%;
+      overflow: hidden;
+      background: #0f172a;
+    }
+    .cake-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .cake-card:hover .cake-img {
+      transform: scale(1.08);
+    }
+
+    .cake-category-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(7, 9, 19, 0.85);
+      backdrop-filter: blur(8px);
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 0.25rem 0.7rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      letter-spacing: 0.5px;
+    }
+
+    .cake-body {
+      padding: 1.4rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .cake-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.45rem;
+      line-height: 1.3;
+      color: #fff;
+    }
+    .cake-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 1.2rem;
+      line-height: 1.45;
+      flex: 1;
+    }
+
+    .cake-rating-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.2rem;
+      padding-top: 0.75rem;
+      border-top: 1px dashed var(--glass-border);
+      font-size: 0.88rem;
+    }
+    .stars-display {
+      color: var(--accent);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .cake-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+    }
+    .cake-price {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #ffffff;
+      font-family: 'Outfit', sans-serif;
+      letter-spacing: -0.5px;
+    }
+
+    /* Modal / Drawer Overlays */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(4, 6, 14, 0.82);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      background: #0f172a;
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      width: 92%;
+      max-width: 540px;
+      padding: 2.2rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      transform: scale(0.92);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+    .overlay.active .modal-box {
+      transform: scale(1);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+    .modal-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+    .close-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      border-radius: 50%;
+      width: 34px;
+      height: 34px;
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .close-btn:hover { background: rgba(255, 255, 255, 0.15); color: #fff; }
+
+    /* Basket Drawer */
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: -450px;
+      width: 100%;
+      max-width: 440px;
+      height: 100vh;
+      background: #0b0f19;
+      border-left: 1px solid var(--glass-border);
+      z-index: 110;
+      box-shadow: -10px 0 40px rgba(0, 0, 0, 0.7);
+      display: flex;
+      flex-direction: column;
+      transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .drawer.active {
+      right: 0;
+    }
+
+    .drawer-header {
+      padding: 1.6rem;
+      border-bottom: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .drawer-body {
+      padding: 1.6rem;
+      flex: 1;
+      overflow-y: auto;
+    }
+    .drawer-footer {
+      padding: 1.6rem;
+      border-top: 1px solid var(--glass-border);
+      background: rgba(7, 9, 19, 0.95);
+    }
+
+    .basket-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      margin-bottom: 0.8rem;
+      gap: 0.85rem;
+    }
+    .basket-item-info {
+      flex: 1;
+    }
+    .basket-item-title {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .basket-item-price {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(7, 9, 19, 0.8);
+      border: 1px solid var(--glass-border);
+      border-radius: 8px;
+      padding: 0.2rem 0.5rem;
+    }
+    .qty-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 0.1rem 0.4rem;
+      transition: color 0.2s ease;
+    }
+    .qty-btn:hover { color: var(--primary); }
+    .qty-val {
+      font-size: 0.9rem;
+      font-weight: 700;
+      min-width: 20px;
+      text-align: center;
+    }
+
+    .total-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 1.2rem;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* Star Selector */
+    .star-rating-input {
+      display: flex;
+      gap: 0.6rem;
+      font-size: 2.2rem;
+      color: var(--text-dim);
+      cursor: pointer;
+      margin: 1.2rem 0;
+      justify-content: center;
+    }
+    .star-rating-input span {
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+    .star-rating-input span:hover,
+    .star-rating-input span.selected {
+      color: var(--accent);
+      transform: scale(1.15);
+      filter: drop-shadow(0 0 10px var(--accent-glow));
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .toast {
+      background: #0f172a;
+      color: #fff;
+      border: 1px solid var(--glass-border);
+      border-left: 4px solid var(--primary);
+      padding: 0.95rem 1.4rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      font-weight: 500;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      animation: slideInToast 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .toast-success { border-left-color: var(--success); }
+
+    @keyframes slideInToast {
+      from { transform: translateX(120%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 3.5rem 1rem;
+      color: var(--text-muted);
+    }
+    .empty-icon { font-size: 3.5rem; margin-bottom: 0.75rem; opacity: 0.7; }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Header -->
+  <header>
+    <div class="nav-container">
+      <a href="#" class="brand">
+        <div class="brand-logo-wrapper">🍰</div>
+        <div>
+          <div style="display: flex; align-items: center; gap: 0.55rem;">
+            <span class="brand-title">Cake Delight</span>
+            <span class="brand-tag">Microservices</span>
+          </div>
+        </div>
+      </a>
+
+      <div class="nav-actions">
+        <!-- Health status indicator -->
+        <div class="health-indicator" onclick="checkHealth()" title="Click to check Gateway & Downstream health">
+          <span class="status-dot" id="health-dot"></span>
+          <span id="health-text">Gateway :3000</span>
+        </div>
+
+        <!-- Demo User ID Input -->
+        <div class="user-badge" title="Active User ID for Cart & Orders">
+          👤 User:
+          <input type="text" id="current-user-id" value="user_123" onchange="loadBasket(); loadNotifications();">
+        </div>
+
+        <!-- Notifications button -->
+        <button class="btn btn-secondary btn-sm" onclick="openNotificationsModal()">
+          🔔 Activity
+        </button>
+
+        <!-- Basket button -->
+        <button class="btn btn-primary cart-btn" onclick="toggleBasket(true)">
+          🛒 Basket
+          <span class="cart-badge" id="cart-count">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <!-- Hero Banner -->
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Artisan Cakes Delivered Fresh</h1>
+        <p>Resilient cloud-native microservices architecture powered by Node.js, Express, MongoDB, RabbitMQ, Docker & Kubernetes.</p>
+        <div class="hero-architecture">
+          <span class="arch-chip">🌐 Gateway (:3000)</span>
+          <span class="arch-chip">🍰 Catalog (:3001)</span>
+          <span class="arch-chip">🛒 Order (:3002)</span>
+          <span class="arch-chip">⭐ Rating (:3003)</span>
+          <span class="arch-chip">🔔 Notification (:3004)</span>
+          <span class="arch-chip">🐰 RabbitMQ Topic Broker</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filter Controls Bar -->
+    <section class="filter-card">
+      <div class="filter-grid">
+        <div class="form-group">
+          <label>Search Cakes</label>
+          <input type="text" id="filter-name" class="form-control" placeholder="e.g. Chocolate, Velvet..." oninput="debounceFilter()">
+        </div>
+
+        <div class="form-group">
+          <label>Category</label>
+          <select id="filter-category" class="form-control" onchange="fetchCakes()">
+            <option value="">All Categories</option>
+            <option value="Chocolate">Chocolate</option>
+            <option value="Cheesecake">Cheesecake</option>
+            <option value="Fruity">Fruity</option>
+            <option value="Vanilla">Vanilla</option>
+            <option value="Vegan">Vegan</option>
+            <option value="Custom">Custom</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Min Price ($)</label>
+          <input type="number" id="filter-min" class="form-control" placeholder="0" min="0" oninput="debounceFilter()">
+        </div>
+
+        <div class="form-group">
+          <label>Max Price ($)</label>
+          <input type="number" id="filter-max" class="form-control" placeholder="100" min="0" oninput="debounceFilter()">
+        </div>
+
+        <div>
+          <button class="btn btn-secondary" style="width: 100%; padding: 0.7rem;" onclick="resetFilters()">Reset Filters</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cake Grid Section -->
+    <section>
+      <div class="section-title">
+        <h2>🍰 Explore Our Cakes</h2>
+        <span style="font-size: 0.9rem; color: var(--text-muted);" id="cake-count-label">Loading catalog...</span>
+      </div>
+
+      <div class="cake-grid" id="cake-grid">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Basket Side Drawer -->
+  <div class="drawer" id="basket-drawer">
+    <div class="drawer-header">
+      <h3 class="modal-title">🛒 Your Basket</h3>
+      <button class="close-btn" onclick="toggleBasket(false)">&times;</button>
+    </div>
+    <div class="drawer-body" id="basket-items-list">
+      <!-- Basket items rendered here -->
+    </div>
+    <div class="drawer-footer">
+      <div class="total-row">
+        <span>Grand Total:</span>
+        <span style="color: var(--primary);" id="basket-grand-total">$0.00</span>
+      </div>
+      <button class="btn btn-primary" style="width: 100%; padding: 0.85rem;" id="btn-checkout" onclick="openCheckoutModal()">
+        Proceed to Checkout →
+      </button>
+    </div>
+  </div>
+
+  <!-- Rating Submission Modal -->
+  <div class="overlay" id="rating-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">⭐ Rate This Cake</h3>
+        <button class="close-btn" onclick="closeModal('rating-modal')">&times;</button>
+      </div>
+      <div id="rating-cake-title" style="font-weight: 700; font-size: 1.1rem; color: var(--accent); margin-bottom: 0.5rem; text-align: center;"></div>
+      
+      <div class="star-rating-input" id="star-selector">
+        <span data-star="1" onclick="setRatingStars(1)">★</span>
+        <span data-star="2" onclick="setRatingStars(2)">★</span>
+        <span data-star="3" onclick="setRatingStars(3)">★</span>
+        <span data-star="4" onclick="setRatingStars(4)">★</span>
+        <span data-star="5" onclick="setRatingStars(5)">★</span>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1.5rem;">
+        <label>Your Review / Feedback</label>
+        <textarea id="rating-comment" class="form-control" rows="3" placeholder="Tell us how delicious it was..."></textarea>
+      </div>
+
+      <button class="btn btn-accent" style="width: 100%; padding: 0.8rem;" onclick="submitRating()">Submit Review</button>
+    </div>
+  </div>
+
+  <!-- Checkout Modal -->
+  <div class="overlay" id="checkout-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">🛍️ Complete Your Order</h3>
+        <button class="close-btn" onclick="closeModal('checkout-modal')">&times;</button>
+      </div>
+      
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label>Customer Email (For RabbitMQ Order Confirmation)</label>
+        <input type="email" id="checkout-email" class="form-control" value="customer@example.com">
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1.5rem;">
+        <label>Delivery Address</label>
+        <input type="text" id="checkout-address" class="form-control" value="123 Baker Street, Sweet City">
+      </div>
+
+      <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--glass-border); padding: 1.1rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem; font-size: 0.88rem;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
+          <span>Items Total:</span>
+          <strong id="checkout-summary-total">$0.00</strong>
+        </div>
+        <div style="color: var(--text-muted); line-height: 1.4;">⚡ Placing this order will publish an <code>order.completed</code> event to RabbitMQ topic exchange.</div>
+      </div>
+
+      <button class="btn btn-primary" style="width: 100%; padding: 0.85rem;" onclick="processCheckout()">Confirm & Place Order</button>
+    </div>
+  </div>
+
+  <!-- Post-Checkout Confirmation Modal -->
+  <div class="overlay" id="confirmation-modal">
+    <div class="modal-box" style="text-align: center;">
+      <div style="font-size: 3.8rem; margin-bottom: 0.5rem;">🎉</div>
+      <h3 class="modal-title" style="color: var(--success); margin-bottom: 0.5rem; font-size: 1.6rem;">Order Placed Successfully!</h3>
+      <p style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 1.5rem;">Your order was recorded and an <code>order.completed</code> event was published to RabbitMQ.</p>
+
+      <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--glass-border); padding: 1.2rem; border-radius: var(--radius-md); text-align: left; margin-bottom: 1.5rem; font-size: 0.88rem;">
+        <p style="margin-bottom: 0.45rem;"><strong>Order ID:</strong> <span id="conf-order-id" style="color: var(--accent); font-family: monospace;"></span></p>
+        <p style="margin-bottom: 0.45rem;"><strong>Email:</strong> <span id="conf-email"></span></p>
+        <p style="margin-bottom: 0.45rem;"><strong>Total Paid:</strong> <span id="conf-total" style="color: var(--success); font-weight: bold;"></span></p>
+        <p><strong>Status:</strong> <span style="background: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.4); padding: 0.15rem 0.6rem; border-radius: 6px; font-weight: bold; font-size: 0.78rem;">CONFIRMED</span></p>
+      </div>
+
+      <button class="btn btn-secondary" style="width: 100%; padding: 0.8rem;" onclick="closeModal('confirmation-modal')">Back to Shop</button>
+    </div>
+  </div>
+
+  <!-- Activity & Notifications Modal -->
+  <div class="overlay" id="notifications-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">🔔 Activity & Event History</h3>
+        <button class="close-btn" onclick="closeModal('notifications-modal')">&times;</button>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <h4 style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.75rem;">RabbitMQ Delivered Notifications</h4>
+        <div id="notifications-list">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Vanilla JavaScript Logic -->
+  <script>
+    const API_BASE = ''; // Gateway is on same origin (:3000)
+    let currentRatingCakeId = null;
+    let selectedStars = 5;
+    let debounceTimer = null;
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchCakes();
+      loadBasket();
+      checkHealth();
+    });
+
+    // Helper: Toast Alert
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type === 'success' ? 'toast-success' : ''}`;
+      toast.innerHTML = `<span>${type === 'success' ? '✅' : 'ℹ️'}</span> <div>${message}</div>`;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 4000);
+    }
+
+    // Helper: Modal control
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    // 1. Fetch Cakes from Catalog Microservice (:3001 proxied)
+    async function fetchCakes() {
+      const name = document.getElementById('filter-name').value.trim();
+      const category = document.getElementById('filter-category').value;
+      const minPrice = document.getElementById('filter-min').value;
+      const maxPrice = document.getElementById('filter-max').value;
+
+      const params = new URLSearchParams();
+      if (name) params.append('name', name);
+      if (category) params.append('category', category);
+      if (minPrice) params.append('minPrice', minPrice);
+      if (maxPrice) params.append('maxPrice', maxPrice);
+
+      try {
+        const res = await fetch(`${API_BASE}/api/cakes?${params.toString()}`);
+        const data = await res.json();
+
+        if (data.success) {
+          renderCakes(data.data);
+          document.getElementById('cake-count-label').innerText = `Showing ${data.count} cakes`;
+        }
+      } catch (err) {
+        showToast('Failed to fetch cakes from Catalog service', 'error');
+      }
+    }
+
+    function debounceFilter() {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(fetchCakes, 300);
+    }
+
+    function resetFilters() {
+      document.getElementById('filter-name').value = '';
+      document.getElementById('filter-category').value = '';
+      document.getElementById('filter-min').value = '';
+      document.getElementById('filter-max').value = '';
+      fetchCakes();
+    }
+
+    // Render Cake Grid
+    function renderCakes(cakes) {
+      const grid = document.getElementById('cake-grid');
+      if (cakes.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <div class="empty-icon">🧁</div>
+            <p>No cakes found matching your criteria.</p>
+          </div>`;
+        return;
+      }
+
+      grid.innerHTML = cakes.map(cake => `
+        <div class="cake-card">
+          <div class="cake-img-wrapper">
+            <img src="${cake.imageUrl}" alt="${cake.name}" class="cake-img" onerror="this.src='https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&q=80'">
+            <span class="cake-category-badge">${cake.category}</span>
+          </div>
+          <div class="cake-body">
+            <h3 class="cake-title">${cake.name}</h3>
+            <p class="cake-desc">${cake.description}</p>
+            
+            <div class="cake-rating-summary">
+              <span class="stars-display" id="rating-avg-${cake._id}">Loading rating...</span>
+              <button class="btn btn-secondary btn-sm" onclick="openRatingModal('${cake._id}', '${cake.name}')">⭐ Rate</button>
+            </div>
+
+            <div class="cake-footer">
+              <span class="cake-price">$${cake.price.toFixed(2)}</span>
+              <button class="btn btn-primary btn-sm" onclick="addToBasket('${cake._id}')">🛒 Add to Basket</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // Load average ratings for each cake from Rating Microservice (:3003 proxied)
+      cakes.forEach(cake => fetchAverageRating(cake._id));
+    }
+
+    // 2. Fetch Average Rating from Rating Service (:3003)
+    async function fetchAverageRating(cakeId) {
+      try {
+        const res = await fetch(`${API_BASE}/api/ratings/cake/${cakeId}/average`);
+        const data = await res.json();
+        const el = document.getElementById(`rating-avg-${cakeId}`);
+        if (el && data.success) {
+          const avg = data.data.averageRating || 0;
+          const count = data.data.totalRatings || 0;
+          el.innerText = `⭐ ${avg} (${count})`;
+        }
+      } catch (err) {
+        console.error('Rating fetch failed:', err);
+      }
+    }
+
+    // Rating Modal & Submission
+    function openRatingModal(cakeId, name) {
+      currentRatingCakeId = cakeId;
+      document.getElementById('rating-cake-title').innerText = name;
+      setRatingStars(5);
+      document.getElementById('rating-comment').value = '';
+      document.getElementById('rating-modal').classList.add('active');
+    }
+
+    function setRatingStars(n) {
+      selectedStars = n;
+      const stars = document.querySelectorAll('#star-selector span');
+      stars.forEach((star, index) => {
+        if (index < n) {
+          star.classList.add('selected');
+        } else {
+          star.classList.remove('selected');
+        }
+      });
+    }
+
+    async function submitRating() {
+      const userId = document.getElementById('current-user-id').value || 'user_123';
+      const comment = document.getElementById('rating-comment').value.trim();
+
+      try {
+        const res = await fetch(`${API_BASE}/api/ratings`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            cakeId: currentRatingCakeId,
+            userId,
+            stars: selectedStars,
+            comment,
+          }),
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast('Rating submitted successfully!', 'success');
+          closeModal('rating-modal');
+          fetchAverageRating(currentRatingCakeId);
+        } else {
+          showToast(data.message || 'Error submitting rating (e.g. duplicate user rating)', 'error');
+        }
+      } catch (err) {
+        showToast('Rating service error', 'error');
+      }
+    }
+
+    // 3. Basket Management (Order Microservice :3002 proxied)
+    function toggleBasket(open) {
+      const drawer = document.getElementById('basket-drawer');
+      if (open) drawer.classList.add('active');
+      else drawer.classList.remove('active');
+    }
+
+    async function loadBasket() {
+      const userId = document.getElementById('current-user-id').value || 'user_123';
+      try {
+        const res = await fetch(`${API_BASE}/api/basket/${userId}`);
+        const data = await res.json();
+
+        if (data.success) {
+          renderBasket(data.data);
+        }
+      } catch (err) {
+        console.error('Failed to load basket:', err);
+      }
+    }
+
+    function renderBasket(basket) {
+      const container = document.getElementById('basket-items-list');
+      const countBadge = document.getElementById('cart-count');
+      const totalEl = document.getElementById('basket-grand-total');
+
+      const items = basket.items || [];
+      const totalCount = items.reduce((acc, item) => acc + item.quantity, 0);
+      countBadge.innerText = totalCount;
+
+      const grandTotal = basket.grandTotal || 0;
+      totalEl.innerText = `$${grandTotal.toFixed(2)}`;
+
+      const checkoutBtn = document.getElementById('btn-checkout');
+      if (items.length === 0) {
+        checkoutBtn.disabled = true;
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">🛒</div>
+            <p>Your basket is currently empty.</p>
+          </div>`;
+        return;
+      }
+
+      checkoutBtn.disabled = false;
+      container.innerHTML = items.map(item => `
+        <div class="basket-item">
+          <div class="basket-item-info">
+            <div class="basket-item-title">${item.cakeName}</div>
+            <div class="basket-item-price">$${item.unitPrice.toFixed(2)} × ${item.quantity} = <strong>$${item.lineTotal.toFixed(2)}</strong></div>
+          </div>
+          <div class="qty-controls">
+            <button class="qty-btn" onclick="updateQty('${item.cakeId}', ${item.quantity - 1})">-</button>
+            <span class="qty-val">${item.quantity}</span>
+            <button class="qty-btn" onclick="updateQty('${item.cakeId}', ${item.quantity + 1})">+</button>
+          </div>
+          <button class="btn btn-secondary btn-sm" style="color: #f43f5e;" onclick="removeItem('${item.cakeId}')">🗑️</button>
+        </div>
+      `).join('');
+    }
+
+    async function addToBasket(cakeId) {
+      const userId = document.getElementById('current-user-id').value || 'user_123';
+      try {
+        const res = await fetch(`${API_BASE}/api/basket/${userId}/items`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cakeId, quantity: 1 }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast('Added cake to basket!', 'success');
+          loadBasket();
+        } else {
+          showToast(data.message || 'Failed to add item', 'error');
+        }
+      } catch (err) {
+        showToast('Order service error', 'error');
+      }
+    }
+
+    async function updateQty(cakeId, quantity) {
+      const userId = document.getElementById('current-user-id').value || 'user_123';
+      try {
+        const res = await fetch(`${API_BASE}/api/basket/${userId}/items/${cakeId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ quantity }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          loadBasket();
+        }
+      } catch (err) {
+        showToast('Failed to update quantity', 'error');
+      }
+    }
+
+    async function removeItem(cakeId) {
+      const userId = document.getElementById('current-user-id').value || 'user_123';
+      try {
+        const res = await fetch(`${API_BASE}/api/basket/${userId}/items/${cakeId}`, {
+          method: 'DELETE',
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast('Item removed from basket');
+          loadBasket();
+        }
+      } catch (err) {
+        showToast('Failed to remove item', 'error');
+      }
+    }
+
+    // 4. Checkout & Order Confirmation (Order Microservice :3002)
+    function openCheckoutModal() {
+      toggleBasket(false);
+      const totalText = document.getElementById('basket-grand-total').innerText;
+      document.getElementById('checkout-summary-total').innerText = totalText;
+      document.getElementById('checkout-modal').classList.add('active');
+    }
+
+    async function processCheckout() {
+      const userId = document.getElementById('current-user-id').value || 'user_123';
+      const customerEmail = document.getElementById('checkout-email').value.trim();
+
+      if (!customerEmail) {
+        showToast('Please provide a valid email address', 'error');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/api/orders/checkout`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, customerEmail }),
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          closeModal('checkout-modal');
+          loadBasket();
+
+          // Show confirmation screen
+          const order = data.data;
+          document.getElementById('conf-order-id').innerText = order._id;
+          document.getElementById('conf-email').innerText = order.customerEmail;
+          document.getElementById('conf-total').innerText = `$${order.totalAmount.toFixed(2)}`;
+          document.getElementById('confirmation-modal').classList.add('active');
+          showToast('Order completed & RabbitMQ event published!', 'success');
+        } else {
+          showToast(data.message || 'Checkout failed', 'error');
+        }
+      } catch (err) {
+        showToast('Checkout service error', 'error');
+      }
+    }
+
+    // 5. Notifications & Activity Modal (Notification Service :3004)
+    async function openNotificationsModal() {
+      document.getElementById('notifications-modal').classList.add('active');
+      loadNotifications();
+    }
+
+    async function loadNotifications() {
+      const userId = document.getElementById('current-user-id').value || 'user_123';
+      const container = document.getElementById('notifications-list');
+
+      try {
+        const res = await fetch(`${API_BASE}/api/notifications/user/${userId}`);
+        const data = await res.json();
+
+        if (data.success && data.data.length > 0) {
+          container.innerHTML = data.data.map(notif => `
+            <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--glass-border); padding: 0.9rem; border-radius: var(--radius-sm); margin-bottom: 0.6rem; font-size: 0.85rem;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem;">
+                <strong style="color: var(--success);">📧 ${notif.channel} (${notif.status})</strong>
+                <span style="color: var(--text-muted); font-size: 0.75rem;">${new Date(notif.deliveredAt).toLocaleTimeString()}</span>
+              </div>
+              <div style="color: var(--text-muted);">Order ID: <span style="font-family: monospace; color: var(--accent);">${notif.orderId}</span></div>
+            </div>
+          `).join('');
+        } else {
+          container.innerHTML = `<div style="color: var(--text-muted); font-size: 0.88rem; padding: 1.2rem 0; text-align: center;">No notification records found for user "${userId}". Place an order to trigger RabbitMQ event!</div>`;
+        }
+      } catch (err) {
+        container.innerHTML = `<div style="color: var(--primary); font-size: 0.88rem; text-align: center; padding: 1rem 0;">Notification service offline or unreachable.</div>`;
+      }
+    }
+
+    // 6. Health Check Indicator
+    async function checkHealth() {
+      const dot = document.getElementById('health-dot');
+      const text = document.getElementById('health-text');
+      try {
+        const res = await fetch(`${API_BASE}/health`);
+        const data = await res.json();
+        if (data.status === 'UP') {
+          dot.style.background = '#10b981';
+          text.innerText = 'Gateway & All Services UP';
+        } else {
+          dot.style.background = '#f59e0b';
+          text.innerText = 'Gateway Degraded';
+        }
+      } catch (err) {
+        dot.style.background = '#f43f5e';
+        text.innerText = 'Gateway Offline';
+      }
+    }
+  </script>
+</body>
+</html>

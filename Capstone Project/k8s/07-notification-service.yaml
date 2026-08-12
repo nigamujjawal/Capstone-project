@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-service
+  namespace: cake-delight
+spec:
+  ports:
+    - port: 3004
+      targetPort: 3004
+  selector:
+    app: notification-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service
+  namespace: cake-delight
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service
+  template:
+    metadata:
+      labels:
+        app: notification-service
+    spec:
+      containers:
+        - name: notification-service
+          image: notification-service:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3004
+          env:
+            - name: PORT
+              value: "3004"
+            - name: MONGO_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: cake-delight-config
+                  key: MONGO_URI_NOTIFICATION
+            - name: RABBITMQ_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: cake-delight-config
+                  key: RABBITMQ_URL
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3004
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3004
+            initialDelaySeconds: 5
+            periodSeconds: 10

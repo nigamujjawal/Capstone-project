@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service
+  namespace: cake-delight
+spec:
+  ports:
+    - port: 3002
+      targetPort: 3002
+  selector:
+    app: order-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service
+  namespace: cake-delight
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: order-service
+  template:
+    metadata:
+      labels:
+        app: order-service
+    spec:
+      containers:
+        - name: order-service
+          image: order-service:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3002
+          env:
+            - name: PORT
+              value: "3002"
+            - name: MONGO_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: cake-delight-config
+                  key: MONGO_URI_ORDER
+            - name: RABBITMQ_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: cake-delight-config
+                  key: RABBITMQ_URL
+            - name: CATALOG_SERVICE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: cake-delight-config
+                  key: CATALOG_SERVICE_URL
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3002
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3002
+            initialDelaySeconds: 5
+            periodSeconds: 10
