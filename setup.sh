@@ -5,11 +5,17 @@ echo "=========================================="
 echo "=== Capstone Project Full Kubernetes Deploy ==="
 echo "=========================================="
 
-# 1. Update and install Docker & dependencies
+# 1. Resolve package conflicts and install Docker & dependencies
 echo "[1/6] Installing Docker and dependencies..."
 sudo apt update
-sudo apt install -y docker.io curl git
-sudo systemctl enable --now docker
+# Handle potential containerd package conflict cleanly
+if ! command -v docker &> /dev/null; then
+  sudo apt remove -y containerd.io containerd 2>/dev/null || true
+  sudo apt update
+  sudo apt install -y docker.io curl git || sudo apt install -y docker-ce docker-ce-cli containerd.io curl git
+fi
+
+sudo systemctl enable --now docker || true
 
 # 2. Configure Docker permissions
 echo "[2/6] Configuring Docker permissions..."
